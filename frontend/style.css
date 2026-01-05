@@ -1,0 +1,173 @@
+/* Global reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Page background */
+body {
+    background:
+      radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 60%),
+      linear-gradient(180deg, #132855, #1532c4);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+/* App container */
+.app {
+    width: 650px;
+    height: 620px;
+
+    background: rgba(7, 42, 77, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(14px);
+
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    box-shadow: 
+        0 25px 50px rgb(161, 149, 60),
+        inset 0 0 0 1px rgba(226, 109, 109, 0.2);
+}
+
+
+/* Header */
+.header {
+    background: rgba(11, 14, 45, 0.85);
+    backdrop-filter: blur(8px);
+
+    color: #e5e7eb;
+    padding: 18px;
+    text-align: center;
+
+    border-bottom: 2px solid #22c55e;
+}
+
+
+.header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.header span {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+
+.header h1 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.header span {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Chat window */
+.chat-window {
+    flex: 1;
+    padding: 14px;
+    overflow-y: auto;
+    background: #e3e3a7;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Chat bubbles */
+.bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.35;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+ 
+/* Bot message */
+.bubble.bot {
+    background: #e2e8f0;
+    color: #020617;
+    border-left: 4px solid #22c55e;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+
+
+/* User message */
+.bubble.user {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+}
+
+
+/* Input bar */
+.input-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: linear-gradient(to right, #e5e7eb, #f1f5f9);
+}
+
+
+/* Plus icon (image upload) */
+.upload-btn {
+    width: 38px;
+    height: 38px;
+    background: radial-gradient(circle at top, #34d399, #22c55e);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1;
+    padding-bottom: 4px;
+    box-shadow: 0 6px 14px rgba(34,197,94,0.5);
+    cursor: pointer;
+}
+.upload-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 10px 24px rgba(34,197,94,0.65);
+    padding-bottom: 4px;
+}
+
+/* Text input */
+.input-bar input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+/* Send button */
+.input-bar button {
+    background: #020617;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.input-bar button:hover {
+    opacity: 0.9;
+}
