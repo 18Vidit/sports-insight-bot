@@ -16,3 +16,7 @@ Thumbs.db
 
 # Environment variables
 .env 
+
+# Python virtual environment
+venv/
+backend/venv/
