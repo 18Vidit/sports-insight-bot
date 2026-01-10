@@ -50,7 +50,7 @@ async def chat(
 ):
     global messages
 
-    # ---- IMAGE → TEXT SUMMARY (ONCE) ----
+    # image to text summary
     if image:
         image_bytes = await image.read()
         image_base64 = image_to_base64(image_bytes)
@@ -85,7 +85,7 @@ async def chat(
             "content": f"Image context: {image_summary}"
         })
 
-    # ---- NORMAL CHAT ----
+    # normal text
     messages.append({
         "role": "user",
         "content": text
