@@ -1,64 +1,161 @@
-const input = document.querySelector(".input-bar input");
-const sendBtn = document.querySelector(".input-bar button");
-const chatWindow = document.querySelector(".chat-window");
-const uploadBtn = document.querySelector(".upload-btn");
+// Configuration - Animated Avatar URL
+const ANALYST_PHOTO_URL = "https://cdn-icons-png.flaticon.com/512/4333/4333609.png";
 
-let selectedImage = null;
+// DOM Elements
+const chatWindow = document.getElementById('chat-window');
+const chatForm = document.getElementById('chat-form');
+const userInput = document.getElementById('user-input');
+const imageUpload = document.getElementById('image-upload');
+const previewContainer = document.getElementById('image-preview-container');
+const previewImage = document.getElementById('image-preview');
+const sendBtn = document.getElementById('send-btn');
 
-/* Handle image selection */
-uploadBtn.addEventListener("click", () => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
+let selectedFile = null;
 
-    fileInput.onchange = () => {
-        selectedImage = fileInput.files[0];
-        alert("Image selected ✔");
-    };
-
-    fileInput.click();
+// 1. Handle File Selection
+imageUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImage.src = e.target.result;
+            previewContainer.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
 });
 
-/* Send message */
-sendBtn.addEventListener("click", sendMessage);
-
-input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") sendMessage();
-});
-
-function addMessage(text, sender) {
-    const bubble = document.createElement("div");
-    bubble.className = `bubble ${sender}`;
-    bubble.innerText = text;
-    chatWindow.appendChild(bubble);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
+function clearImage() {
+    selectedFile = null;
+    imageUpload.value = ""; 
+    previewContainer.classList.add('hidden');
+    previewImage.src = "";
 }
 
-async function sendMessage() {
-    const text = input.value.trim();
-    if (!text && !selectedImage) return;
+// 2. Handle Form Submission
+chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = userInput.value.trim();
 
-    if (text) addMessage(text, "user");
-    input.value = "";
+    if (!text && !selectedFile) return;
 
+    // Display User Message
+    addMessage(text, 'user', selectedFile);
+
+    // Prepare data
     const formData = new FormData();
-    formData.append("text", text || "Analyze this image");
-
-    if (selectedImage) {
-        formData.append("image", selectedImage);
-        selectedImage = null;
+    formData.append('text', text);
+    if (selectedFile) {
+        formData.append('image', selectedFile);
     }
+
+    // Clear Inputs
+    userInput.value = '';
+    clearImage(); 
+    
+    // Disable send button
+    sendBtn.disabled = true;
+    
+    // Show loading
+    const loadingId = addLoadingIndicator();
 
     try {
-        const response = await fetch("https://sports-bot-backend.onrender.com/chat", {
-            method: "POST",
-            body: formData
+        // Connect to FastAPI Backend
+        const response = await fetch('http://127.0.0.1:8000/chat', {
+            method: 'POST',
+            body: formData 
         });
 
-        const data = await response.json();
-        addMessage(data.reply, "bot");
+        if (!response.ok) throw new Error('Network error');
 
-    } catch (err) {
-        addMessage("⚠ Server error. Is backend running?", "bot");
+        const data = await response.json();
+        
+        // Remove loading and show reply
+        removeMessage(loadingId);
+        addMessage(data.reply, 'bot');
+
+    } catch (error) {
+        console.error("Error:", error);
+        removeMessage(loadingId);
+        addMessage("Sorry, I couldn't analyze that play. Is the backend running?", 'bot');
+    } finally {
+        sendBtn.disabled = false;
+        userInput.focus();
     }
+});
+
+// 3. UI Helper Functions
+function addMessage(text, sender, imageFile = null) {
+    const div = document.createElement('div');
+    div.classList.add('message', `${sender}-message`);
+
+    // Create Avatar
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    
+    if (sender === 'bot') {
+        avatar.innerHTML = `<img src="${ANALYST_PHOTO_URL}" alt="Analyst">`;
+    } else {
+        avatar.innerHTML = '<i class="fa-solid fa-user"></i>';
+    }
+
+    // Create Bubble
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    
+    if (imageFile) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(imageFile);
+        img.className = 'chat-image-display';
+        img.onload = () => URL.revokeObjectURL(img.src);
+        bubble.appendChild(img);
+        
+        if(text) bubble.appendChild(document.createElement('br'));
+    }
+
+    if(text) {
+        const textNode = document.createElement('span');
+        textNode.textContent = text;
+        bubble.appendChild(textNode);
+    }
+
+    if (sender === 'bot') {
+        div.appendChild(avatar);
+        div.appendChild(bubble);
+    } else {
+        div.appendChild(bubble);
+        div.appendChild(avatar);
+    }
+
+    chatWindow.appendChild(div);
+    scrollToBottom();
+    return div.id = 'msg-' + Date.now();
+}
+
+function addLoadingIndicator() {
+    const div = document.createElement('div');
+    div.classList.add('message', 'bot-message');
+    div.id = 'loading-indicator';
+    div.innerHTML = `
+        <div class="avatar">
+             <img src="${ANALYST_PHOTO_URL}" alt="Analyst">
+        </div>
+        <div class="bubble" style="color: #94a3b8; font-style: italic; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="color: var(--accent-color)"></i> Analyzing your message...
+        </div>
+    `;
+    chatWindow.appendChild(div);
+    scrollToBottom();
+    return div.id;
+}
+
+function removeMessage(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+function scrollToBottom() {
+    const wrapper = document.querySelector('.chat-window-wrapper');
+    wrapper.scrollTop = wrapper.scrollHeight;
 }

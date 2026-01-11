@@ -20,7 +20,7 @@ client = OpenAI(
     api_key=os.getenv("OPENROUTER_API_KEY"),
 )
 
-MODEL = "qwen/qwen-vl-plus"
+MODEL = "qwen/qwen-2.5-vl-7b-instruct"
 MAX_MESSAGES = 10
 
 system_message = {
@@ -74,7 +74,7 @@ async def chat(
         vision_response = client.chat.completions.create(
             model=MODEL,
             messages=vision_prompt,
-            max_tokens=200,
+            max_tokens=400,
         )
 
         image_summary = vision_response.choices[0].message.content

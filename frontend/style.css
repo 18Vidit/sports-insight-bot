@@ -1,173 +1,347 @@
-/* Global reset */
+:root {
+    --bg-overlay: rgba(10, 15, 30, 0.75); /* Slightly lighter overlay to see stadium better */
+    --header-bg: rgba(15, 23, 42, 0.95);
+    --accent-color: #00ff88;   /* Neon Sports Green */
+    --user-msg: #3b82f6;       /* Jersey Blue */
+    --bot-msg: #1e293b;        /* Dark Slate */
+    --text-color: #f1f5f9;
+    --content-max-width: 1000px;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Segoe UI", sans-serif;
+    font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
 }
 
-/* Page background */
 body {
-    background:
-      radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 60%),
-      linear-gradient(180deg, #132855, #1532c4);
     height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    color: var(--text-color);
+    
+    /* Stadium Background */
+    background-image: url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=2070&auto=format&fit=crop'); 
+    background-size: cover;
+    background-position: center 30%;
+    position: relative;
+}
+
+/* Dark overlay for readability */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg-overlay);
+    z-index: -1;
+    backdrop-filter: blur(2px);
+}
+
+/* Main Layout structure */
+.app-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* --- Header --- */
+.chat-header {
+    width: 100%;
+    background-color: var(--header-bg);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 15px 0;
+    z-index: 10;
+}
+
+.header-content {
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
-
-
-/* App container */
-.app {
-    width: 650px;
-    height: 620px;
-
-    background: rgba(7, 42, 77, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(14px);
-
-    border-radius: 18px;
+.logo-area {
     display: flex;
-    flex-direction: column;
-    overflow: hidden;
-
-    box-shadow: 
-        0 25px 50px rgb(161, 149, 60),
-        inset 0 0 0 1px rgba(226, 109, 109, 0.2);
+    align-items: center;
+    gap: 12px;
 }
 
-
-/* Header */
-.header {
-    background: rgba(11, 14, 45, 0.85);
-    backdrop-filter: blur(8px);
-
-    color: #e5e7eb;
-    padding: 18px;
-    text-align: center;
-
-    border-bottom: 2px solid #22c55e;
+.logo-area i {
+    font-size: 1.6rem;
+    color: var(--accent-color);
 }
 
-
-.header h1 {
-    font-size: 20px;
+.logo-area h1 {
+    font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-.header span {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-
-.header h1 {
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.header span {
-    font-size: 12px;
-    opacity: 0.7;
-}
-
-/* Chat window */
-.chat-window {
-    flex: 1;
-    padding: 14px;
-    overflow-y: auto;
-    background: #e3e3a7;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* Chat bubbles */
-.bubble {
-    max-width: 80%;
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
-    line-height: 1.35;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-}
-
- 
-/* Bot message */
-.bubble.bot {
-    background: #e2e8f0;
-    color: #020617;
-    border-left: 4px solid #22c55e;
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
-
-
-
-/* User message */
-.bubble.user {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
-}
-
-
-/* Input bar */
-.input-bar {
+.status-indicator {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px;
-    background: linear-gradient(to right, #e5e7eb, #f1f5f9);
+    gap: 6px;
 }
 
-
-/* Plus icon (image upload) */
-.upload-btn {
-    width: 38px;
-    height: 38px;
-    background: radial-gradient(circle at top, #34d399, #22c55e);
-    color: white;
+.status-dot {
+    height: 8px;
+    width: 8px;
+    background-color: var(--accent-color);
     border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-color);
+}
+
+.reset-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+.reset-btn:hover { color: var(--accent-color); }
+
+/* --- Chat Area --- */
+.chat-window-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
     display: flex;
     justify-content: center;
+    /* Add padding bottom so messages don't get hidden behind the floating input */
+    padding-bottom: 20px; 
+}
+
+.chat-window {
+    width: 100%;
+    max-width: var(--content-max-width);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    scroll-behavior: smooth;
+}
+
+/* Messages */
+.message {
+    display: flex;
+    gap: 15px;
+    max-width: 85%;
+    animation: slideIn 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    .message { max-width: 70%; }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.message.user-message {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+/* Avatar Styles */
+.avatar {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 5px;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.user-message .avatar {
     align-items: center;
-    font-size: 22px;
-    font-weight: 300;
-    line-height: 1;
-    padding-bottom: 4px;
-    box-shadow: 0 6px 14px rgba(34,197,94,0.5);
-    cursor: pointer;
-}
-.upload-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 10px 24px rgba(34,197,94,0.65);
-    padding-bottom: 4px;
+    justify-content: center;
+    background: var(--user-msg);
+    border-radius: 50%;
+    width: 40px; height: 40px;
 }
 
-/* Text input */
-.input-bar input {
-    flex: 1;
-    padding: 10px 14px;
-    border-radius: 20px;
-    border: none;
-    outline: none;
-    font-size: 14px;
-}
-
-/* Send button */
-.input-bar button {
-    background: #020617;
+.user-message .avatar i {
+    font-size: 1.1rem;
     color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
 }
 
-.input-bar button:hover {
-    opacity: 0.9;
+/* Bubbles */
+.bubble {
+    padding: 16px 20px;
+    border-radius: 18px;
+    font-size: 1rem;
+    line-height: 1.5;
+    position: relative;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.user-message .bubble {
+    background-color: var(--user-msg);
+    color: white;
+    border-bottom-right-radius: 4px;
+    background: linear-gradient(135deg, var(--user-msg), #2563eb);
+}
+
+.bot-message .bubble {
+    background-color: var(--bot-msg);
+    color: #e2e8f0;
+    border-bottom-left-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.chat-image-display {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-top: 10px;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+/* --- Input Area (UPDATED) --- */
+.input-area {
+    width: 100%;
+    /* Transparent background to show stadium */
+    background: transparent; 
+    padding: 20px 0;
+    position: relative;
+    /* No border-top */
+    border: none; 
+}
+
+.input-content {
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+}
+
+/* Image Preview Overlay */
+#image-preview-container {
+    position: absolute;
+    bottom: 85px;
+    left: 20px;
+    z-index: 20;
+}
+
+.preview-box {
+    background: var(--bot-msg);
+    padding: 6px;
+    border-radius: 12px;
+    border: 2px solid var(--accent-color);
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.hidden { display: none !important; }
+
+#image-preview {
+    max-height: 120px;
+    border-radius: 8px;
+    display: block;
+}
+
+#remove-image {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ef4444;
+    border: 2px solid var(--bot-msg);
+    color: white;
+    cursor: pointer;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+}
+#remove-image:hover { transform: scale(1.1); }
+
+/* Input Form (Floating Capsule) */
+#chat-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Darker, semi-transparent background for contrast against stadium */
+    background-color: rgba(15, 23, 42, 0.85); 
+    backdrop-filter: blur(10px); /* Blurs the grass/stadium behind the text */
+    padding: 12px 15px 12px 25px;
+    border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: all 0.3s;
+}
+
+#chat-form:focus-within {
+    border-color: var(--accent-color);
+    background-color: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+}
+
+#user-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.05rem;
+    outline: none;
+}
+#user-input::placeholder { color: #94a3b8; }
+
+.upload-btn {
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.4rem;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+}
+.upload-btn:hover { color: var(--accent-color); }
+
+#send-btn {
+    background-color: var(--accent-color);
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    color: #064e3b;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+}
+
+#send-btn:hover { 
+    transform: scale(1.05); 
+    background-color: #34d399;
+}
+#send-btn:disabled { 
+    background-color: #475569; 
+    color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
