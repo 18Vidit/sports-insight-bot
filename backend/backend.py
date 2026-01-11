@@ -32,7 +32,7 @@ system_message = {
     )
 }
 
-# Single conversation memory
+#Single conversation memory
 messages = [system_message]
 
 def image_to_base64(file_bytes):
@@ -50,7 +50,7 @@ async def chat(
 ):
     global messages
 
-    # image to text summary
+    #image to text summary
     if image:
         image_bytes = await image.read()
         image_base64 = image_to_base64(image_bytes)
@@ -79,13 +79,13 @@ async def chat(
 
         image_summary = vision_response.choices[0].message.content
 
-        # Store image context as text
+        #Storing image context as text
         messages.append({
             "role": "system",
             "content": f"Image context: {image_summary}"
         })
 
-    # normal text
+    #normal text
     messages.append({
         "role": "user",
         "content": text
