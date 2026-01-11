@@ -62,7 +62,7 @@ chatForm.addEventListener('submit', async (e) => {
 
     try {
         // Connect to FastAPI Backend
-        const response = await fetch('https://sports-analysis-ai.onrender.com/chat', {
+        const response = await fetch('https://sports-insight-bot.vercel.app/chat', {
             method: 'POST',
             body: formData 
         });
