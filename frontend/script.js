@@ -62,7 +62,7 @@ chatForm.addEventListener('submit', async (e) => {
 
     try {
         // Connect to FastAPI Backend
-        const response = await fetch('http://127.0.0.1:8000/chat', {
+        const response = await fetch('https://sports-analysis-ai.onrender.com/chat', {
             method: 'POST',
             body: formData 
         });
